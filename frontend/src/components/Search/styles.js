@@ -3,7 +3,6 @@ import styled from 'styled-components'
 export const Container = styled.div`
   width: 100%;
   display: flex;
-  flex-direction: column;
   align-items: flex-start;
 
   background-color: ${({ theme }) => theme.COLORS.BACKGROUND_900};
@@ -11,16 +10,11 @@ export const Container = styled.div`
 
   border-radius: 10px;
 
-  > label {
-    color: ${({ theme }) => theme.COLORS.LIGHT_400};
-    margin-bottom: 8px;
-  }
-
   > input {
-    height: 56px;
+    height: 48px;
     width: 100%;
 
-    padding: 14px 14px 14px 134px;
+    padding: 14px 14px 14px 55px;
     color: ${({ theme }) => theme.COLORS.LIGHT_500};
     background: ${({ theme }) => theme.COLORS.DARK_900};
     border-radius: 8px;
@@ -36,8 +30,8 @@ export const Container = styled.div`
   }
   > svg {
     position: absolute;
-    margin-top: 18px;
-    margin-left: 100px;
+    margin-top: 14px;
+    margin-left: 18px;
     > path {
       stroke: #ffffff;
     }
