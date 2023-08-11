@@ -1,0 +1,231 @@
+import { useState } from "react";
+
+import { Footer } from "../../components/Footer";
+import { Header } from "../../components/Header";
+import {
+  Container,
+  LimitPageMobile,
+  MyOrder,
+  OrderTitle,
+  OrderList,
+  OrderItem,
+  ProductImage,
+  ContainerInfo,
+  ProductInfo,
+  ProductPrice,
+  ProductTitle,
+  ButtonProductDelete,
+  OrderTotal,
+  Payment,
+  PaymentTitle,
+  PaymentCard,
+  PaymentButton,
+  ContainerInput,
+} from "./styles";
+import { PixIcon } from "../../icons/PixIcon";
+import { PiCreditCard, PiReceiptLight } from "react-icons/pi";
+import { ButtonText } from "../../components/ButtonText";
+import { QrCode } from "../../icons/QrCode";
+import { Input } from "../../components/Input";
+import { ButtonOrder } from "../../components/ButtonOrder";
+import { Button } from "../../components/Button";
+import { moneyToPtBrTwoPrecision } from "../../helpers/currency.helper";
+import { useCart } from "../../hook/CartStore";
+import {
+  maskCVV,
+  maskCreditCard,
+  maskExpirationDate,
+} from "../../helpers/mask.helper";
+import { validateCreditCardNumber } from "../../helpers/validation.helper";
+
+export function Orders() {
+  const [cardNumber, setCardNumber] = useState("");
+  const [expiryDate, setExpiryDate] = useState("");
+  const [cvv, setCvv] = useState("");
+  const [formErrors, setFormErrors] = useState({});
+  const [paymentProgress, setPaymentProgress] = useState({});
+
+  const [typePayment, setTypePayment] = useState("pix");
+  const [pageNumber, setPageNumber] = useState(1);
+  const { cart, total, handleRemoveDishFromCart } = useCart();
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const errors = {};
+
+    if (
+      !cardNumber ||
+      cardNumber.length < 19 ||
+      !validateCreditCardNumber(cardNumber)
+    ) {
+      console.log(cardNumber.length);
+      errors.cardNumber = "Número do cartão inválido";
+    }
+
+    if (!expiryDate || expiryDate.length < 5) {
+      errors.expiryDate = "Validade do cartão inválido";
+    }
+
+    if (!cvv || cvv.length < 3) {
+      errors.cvv = "CVV do cartão inválido";
+    }
+
+    if (Object.keys(errors).length === 0) {
+      setFormErrors({});
+
+      const formObj = {
+        cardNumber,
+        expiryDate,
+        cvv,
+        cart,
+        total,
+      };
+
+      console.log(formObj);
+    } else {
+      // Se houver erros, atualizar o estado de formErrors para mostrar mensagens de erro
+      setFormErrors(errors);
+    }
+  };
+
+  const handleInputChange = (event, inputName) => {
+    const inputValue = event.target.value;
+    // Limpar o erro relacionado ao campo quando o valor for alterado
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      [inputName]: undefined,
+    }));
+
+    switch (inputName) {
+      case "cardNumber":
+        setCardNumber(inputValue);
+        break;
+      case "expiryDate":
+        setExpiryDate(inputValue);
+        break;
+      case "cvv":
+        setCvv(inputValue);
+        break;
+      default:
+        break;
+    }
+  };
+  return (
+    <Container>
+      <Header />
+      <LimitPageMobile>
+        <MyOrder pageNumber={pageNumber}>
+          <OrderTitle>Meu pedido</OrderTitle>
+
+          <OrderList>
+            {cart.map((item) => (
+              <OrderItem>
+                <ProductImage>
+                  <img src={item.image} alt={item.title} />
+                </ProductImage>
+                <ContainerInfo>
+                  <ProductInfo>
+                    <ProductTitle>
+                      {item.quantity} x {item.title}
+                    </ProductTitle>
+                    <ProductPrice>
+                      {moneyToPtBrTwoPrecision(item.price)}
+                    </ProductPrice>
+                  </ProductInfo>
+                  <ButtonProductDelete
+                    onClick={() => handleRemoveDishFromCart(item.id)}
+                  >
+                    Excluir
+                  </ButtonProductDelete>
+                </ContainerInfo>
+              </OrderItem>
+            ))}
+          </OrderList>
+
+          <OrderTotal>Total: {moneyToPtBrTwoPrecision(total)}</OrderTotal>
+          <Button
+            name="Avançar"
+            onClick={() => setPageNumber(2)}
+            className="buttonAdvance"
+            pageNumber={pageNumber}
+          />
+        </MyOrder>
+
+        <Payment pageNumber={pageNumber}>
+          <PaymentTitle>Pagamento</PaymentTitle>
+          <PaymentButton>
+            <ButtonText
+              title="PIX"
+              onClick={() => setTypePayment("pix")}
+              icon={PixIcon}
+              isActive={typePayment === "pix"}
+            />
+            <ButtonText
+              title="Crédito"
+              onClick={() => setTypePayment("credito")}
+              icon={PiCreditCard}
+              isActive={typePayment === "credito"}
+            />
+          </PaymentButton>
+          <PaymentCard onSubmit={handleSubmit}>
+            {typePayment === "pix" ? (
+              <QrCode />
+            ) : (
+              <>
+                <Input
+                  label="Número do Cartão"
+                  placeholder="Ex: 0000 0000 0000 0000"
+                  maxLength={19}
+                  value={maskCreditCard(cardNumber)}
+                  onChange={(e) => handleInputChange(e, "cardNumber")}
+                />
+                {formErrors.cardNumber && (
+                  <span className="error">{formErrors.cardNumber}</span>
+                )}
+                <ContainerInput>
+                  <Input
+                    label="Validade"
+                    placeholder="Ex: 04/25"
+                    maxLength={5}
+                    value={maskExpirationDate(expiryDate)}
+                    onChange={(e) => handleInputChange(e, "expiryDate")}
+                  />
+
+                  <Input
+                    label="CVC"
+                    placeholder="Ex: 000"
+                    maxLength={3}
+                    value={maskCVV(cvv)}
+                    onChange={(e) => handleInputChange(e, "cvv")}
+                  />
+                </ContainerInput>
+                {formErrors.expiryDate && (
+                  <span className="error">{formErrors.expiryDate}</span>
+                )}
+                {formErrors.cvv && (
+                  <span className="error2">{formErrors.cvv}</span>
+                )}
+
+                <ButtonOrder
+                  name={`Finalizar pagamento`}
+                  icon={PiReceiptLight}
+                  type="submit"
+                />
+              </>
+            )}
+          </PaymentCard>
+          <ContainerInput>
+            <Button
+              name="Voltar"
+              onClick={() => setPageNumber(1)}
+              className="buttonBack"
+              pageNumber={pageNumber}
+            />
+          </ContainerInput>
+        </Payment>
+      </LimitPageMobile>
+      <Footer />
+    </Container>
+  );
+}

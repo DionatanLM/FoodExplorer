@@ -1,13 +1,10 @@
 import { BrowserRouter } from "react-router-dom";
 import { AppRoutes } from "./app.routes";
 import { AuthRoutes } from "./auth.routes";
-import { SignIn } from "../pages/SignIn";
+import { useAuth } from "../hook/auth";
 
 export function Routes() {
-  return (
-    <BrowserRouter>
-      {/* {user ? <AppRoutes /> : <AuthRoutes />} */}
-      <AppRoutes />
-    </BrowserRouter>
-  );
+  const { user } = useAuth();
+
+  return <BrowserRouter>{user ? <AppRoutes /> : <AuthRoutes />}</BrowserRouter>;
 }

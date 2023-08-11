@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const Container = styled.div`
   width: 100%;
@@ -7,22 +7,34 @@ export const Container = styled.div`
   flex-direction: column;
   align-items: flex-start;
 
+  position: absolute;
+  top: 0px;
+  left: 0px;
   background-color: ${({ theme }) => theme.COLORS.DARK_400};
+  left: ${(props) => (props.sidebar ? "0" : "-100%")};
+  animation: showSidebar 0.1s;
+  z-index: 10;
 
-  transition: all 0.3s ease-in-out;
-
-`
+  @keyframes showSidebar {
+    from {
+      opacity: 0;
+      width: 0;
+    }
+    to {
+      opacity: 1;
+      width: 300px;
+    }
+  }
+`;
 
 export const HeaderMobile = styled.div`
   display: flex;
   gap: 16px;
   align-items: center;
   width: 100%;
-  height: 100%;
+  height: 70px;
   padding: 0px 24px;
   background-color: ${({ theme }) => theme.COLORS.DARK_700};
-
-  transform: translateY(0px);
 
   transition: 0.5s;
 
@@ -34,10 +46,49 @@ export const HeaderMobile = styled.div`
   @media (min-width: 768px) {
     display: none;
   }
-`
+`;
 
 export const Text = styled.span`
   color: ${({ theme }) => theme.COLORS.WHITE};
   font-size: 21px;
   font-weight: 400;
-`
+`;
+
+export const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 100%;
+  height: 100%;
+  padding: 24px;
+  background-color: ${({ theme }) => theme.COLORS.DARK_400};
+
+  input {
+    margin-bottom: 36px;
+  }
+`;
+
+export const ItemMenu = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+
+  color: ${({ theme }) => theme.COLORS.WHITE};
+  background: none;
+  font-family: "Poppins";
+  font-size: 24px;
+  padding: 10px;
+
+  border: none;
+  border-bottom: 1px solid ${({ theme }) => theme.COLORS.DARK_1000};
+
+  &:disabled {
+    opacity: 0.5;
+  }
+
+  &:hover {
+    filter: brightness(0.9);
+  }
+`;

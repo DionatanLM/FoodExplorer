@@ -1,5 +1,7 @@
-import logoImg from '../../assets/logo.png'
-import styled from 'styled-components'
+import logoImg from "../../assets/logo.png";
+import logoImgAdmin from "../../assets/logoAdmin.svg";
+import logoImgAdminMobile from "../../assets/logoAdminMobile.svg";
+import styled from "styled-components";
 
 export const Container = styled.div`
   width: 100%;
@@ -10,10 +12,18 @@ export const Container = styled.div`
   @media (max-width: 768px) {
     height: 70px;
   }
-`
+`;
+
+export const ButtonFavorite = styled.div`
+  button {
+    font-size: 16px;
+    font-weight: 400;
+    width: 141px;
+  }
+`;
 
 export const HeaderLimit = styled.div`
-  max-width: 1060px;
+  max-width: 1130px;
   width: 100%;
   height: 100%;
   display: flex;
@@ -30,26 +40,29 @@ export const HeaderLimit = styled.div`
   @media (max-width: 768px) {
     display: none;
   }
-`
+`;
 
 export const Logo = styled.div`
   min-width: 203px;
   height: 100%;
-  background: url(${logoImg}) no-repeat center;
+  background: url(${({ admin }) => (admin ? logoImgAdmin : logoImg)}) no-repeat
+    center;
   background-size: 200px;
-`
+  cursor: pointer;
 
-export const LogoMobile = styled.div`
-  min-width: 150px;
-  height: 100%;
-  background: url(${logoImg}) no-repeat center;
-  background-size: 150px;
-`
+  @media (max-width: 768px) {
+    min-width: 150px;
+    height: 100%;
+    background: url(${({ admin }) => (admin ? logoImgAdminMobile : logoImg)})
+      no-repeat center;
+    background-size: ${({ admin }) => (admin ? "180px" : "150px")};
+  }
+`;
 
 export const Search = styled.div`
   width: 100%;
   height: 100%;
-`
+`;
 
 export const Logout = styled.button`
   background: none;
@@ -60,23 +73,27 @@ export const Logout = styled.button`
     color: ${({ theme }) => theme.COLORS.WHITE};
     font-size: 24px;
   }
-`
+`;
 
 export const HeaderMobile = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   width: 100%;
   height: 100%;
   padding: 0px 24px;
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  grid-template-rows: auto 0 0;
+  grid-template-areas:
+    "menu"
+    "logo"
+    "order";
 
   @media (min-width: 768px) {
     display: none;
   }
-`
+`;
 
 export const Circle = styled.div`
-  display: flex;
+  display: grid;
   align-items: center;
   justify-content: center;
   width: 20px;
@@ -87,21 +104,21 @@ export const Circle = styled.div`
   position: absolute;
   background-color: ${({ theme }) => theme.COLORS.RED_100};
   color: ${({ theme }) => theme.COLORS.WHITE};
-  top: -3px;
-  right: -3px;
-`
+  top: 15px;
+  margin-right: -5px;
+`;
 
 export const ContainerAlt = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   transition: all 1s ease-in-out;
-`
+`;
 
 export const Order = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
 
   position: relative;
-`
+`;

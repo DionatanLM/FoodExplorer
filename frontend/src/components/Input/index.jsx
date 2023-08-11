@@ -1,10 +1,16 @@
-import { Container } from './styles'
+import { Container } from "./styles";
 
-export function Input({ icon: Icon, label, ...rest }) {
+export function Input({
+  icon: Icon,
+  label,
+  widthContainer,
+  textarea,
+  ...rest
+}) {
   return (
-    <Container>
+    <Container style={widthContainer}>
       {label && <label>{label}</label>}
-      <input {...rest} />
+      {textarea ? <textarea {...rest} rows="4" cols="50" /> : <input {...rest} />}
     </Container>
-  )
+  );
 }

@@ -42,7 +42,7 @@ export default createGlobalStyle`
     border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background-color: ${({ theme }) => theme.COLORS.DARK_600};
+  background-color: ${({ theme }) => theme.COLORS.DARK_900};
   border-radius: 10px;
 
 }

@@ -5,65 +5,92 @@ import {
   Logo,
   HeaderMobile,
   ContainerAlt,
-  LogoMobile,
   Order,
-  Circle
-} from './styles'
-import { useState } from 'react'
-import { GrSearch } from 'react-icons/gr'
-import { PiReceiptLight, PiSignOut } from 'react-icons/pi'
-import { RxHamburgerMenu } from 'react-icons/rx'
-//import { useAuth } from "../../hooks/auth";
-import { useNavigate } from 'react-router-dom'
-import { Search } from '../Search'
-import { ButtonOrder } from '../ButtonOrder'
-import { NavOffCanvas } from '../NavOffCanvas'
+  Circle,
+  ButtonFavorite,
+} from "./styles";
+import { useState } from "react";
+import { GrSearch } from "react-icons/gr";
+import { PiReceiptLight, PiSignOut } from "react-icons/pi";
+import { RxHamburgerMenu } from "react-icons/rx";
+import { useNavigate } from "react-router-dom";
+import { Search } from "../Search";
+import { ButtonOrder } from "../ButtonOrder";
+import { NavOffCanvas } from "../NavOffCanvas";
+import { ButtonText } from "../ButtonText";
+import { useAuth } from "../../hook/auth";
 
-export function Header() {
-  //const { signOut, user } = useAuth();
-  const [showMenu, setShowMenu] = useState(false)
-
-  const navigate = useNavigate()
+export function Header({ search }) {
+  const [showMenu, setShowMenu] = useState(false);
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+  const admin = user?.isAdmin;
 
   function handleShowNavOffCanvas() {
-    setShowMenu(true)
+    setShowMenu(true);
   }
 
   function handleSignOut() {
-    navigate('/')
-    //signOut();
+    navigate("/");
+    signOut();
+  }
+
+  function handleNavigateToOrders() {
+    navigate("/orders");
   }
   return (
     <Container>
       <HeaderLimit>
-        <Logo />
+        <Logo admin={admin} onClick={() => navigate("/")} />
 
         <Search
           placeholder="Busque por pratos ou ingredientes"
           icon={GrSearch}
+          onChange={(e) => {
+            search(e.target.value);
+          }}
         />
 
-        <ButtonOrder name="Pedidos (0)" icon={PiReceiptLight} />
+        <ButtonFavorite>
+          {!admin && (
+            <ButtonText
+              title="Meus favoritos"
+              onClick={() => navigate("/favorites")}
+            />
+          )}
+        </ButtonFavorite>
+        {admin && admin ? (
+          <ButtonOrder
+            name="Novo prato"
+            onClick={() => navigate("/product/new")}
+          />
+        ) : (
+          <ButtonOrder
+            name={`Pedidos (0)`}
+            icon={PiReceiptLight}
+            onClick={handleNavigateToOrders}
+          />
+        )}
 
         <Logout onClick={handleSignOut}>
           <PiSignOut size={30} />
         </Logout>
       </HeaderLimit>
-      {!showMenu && (
-        <HeaderMobile>
-          <ContainerAlt onClick={handleShowNavOffCanvas}>
-            <RxHamburgerMenu size={30} />
-          </ContainerAlt>
+      <HeaderMobile>
+        <ContainerAlt onClick={handleShowNavOffCanvas}>
+          <RxHamburgerMenu size={30} />
+        </ContainerAlt>
 
-          <LogoMobile />
+        <Logo admin={admin} onClick={() => navigate("/")} />
 
-          <Order>
+        {!admin && (
+          <Order onClick={handleNavigateToOrders}>
             <PiReceiptLight size={34} />
             <Circle>0</Circle>
           </Order>
-        </HeaderMobile>
-      )}
-      {showMenu && <NavOffCanvas show={showMenu} setShowMenu={setShowMenu} />}
+        )}
+      </HeaderMobile>
+      {showMenu && <NavOffCanvas active={setShowMenu} admin={admin} />}
     </Container>
-  )
+  );
 }

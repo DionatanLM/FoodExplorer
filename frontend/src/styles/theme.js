@@ -10,8 +10,8 @@ export default {
     DARK_800: "#0D161B",
     DARK_900: "#0D1D25",
     DARK_1000: "#192227",
-    DARK_GRADIENT:
-      "var(--gradients-100, linear-gradient(90deg, rgba(0, 10, 15, 0.27) 0%, rgba(0, 10, 15, 0.32) 6.25%, #000A0F 100%))",
+    DARK_GRADIENT: "linear-gradient(180deg, #091E26 0%, #00131C 100%)",
+    DARK_GRADIENT_TRANSPARENT: "linear-gradient(90deg, rgba(0, 10, 15, 0.27) 0%, #000A0F 100%));",
 
     WHITE: "#FFFFFF",
     LIGHT_200: "#FFFAF1",

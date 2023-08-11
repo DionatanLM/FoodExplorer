@@ -3,23 +3,25 @@ import { Container, Form, Logo } from "./styles";
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../hook/auth";
 
 export function SignIn() {
+  const { signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignIn = async () => {
-    // try {
-    //   if (email && password) {
-    //     signIn({ email, password });
-    //   }
-    // } catch (e) {
-    //   if (e.response) {
-    //     alert(e.response.data.message);
-    //   } else {
-    //     alert("Não foi possivel entrar.");
-    //   }
-    // }
+  const handleSignIn = async (e) => {
+    try {
+      if (email && password) {
+        signIn({ email, password });
+      }
+    } catch (e) {
+      if (e.response) {
+        alert(e.response.data.message);
+      } else {
+        alert("Não foi possivel entrar.");
+      }
+    }
   };
 
   return (
