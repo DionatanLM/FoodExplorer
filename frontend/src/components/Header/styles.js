@@ -1,7 +1,7 @@
-import logoImg from "../../assets/logo.png";
-import logoImgAdmin from "../../assets/logoAdmin.svg";
-import logoImgAdminMobile from "../../assets/logoAdminMobile.svg";
-import styled from "styled-components";
+import logoImg from '../../assets/logo.png'
+import logoImgAdmin from '../../assets/logoAdmin.svg'
+import logoImgAdminMobile from '../../assets/logoAdminMobile.svg'
+import styled from 'styled-components'
 
 export const Container = styled.div`
   width: 100%;
@@ -12,7 +12,7 @@ export const Container = styled.div`
   @media (max-width: 768px) {
     height: 70px;
   }
-`;
+`
 
 export const ButtonFavorite = styled.div`
   button {
@@ -20,7 +20,15 @@ export const ButtonFavorite = styled.div`
     font-weight: 400;
     width: 141px;
   }
-`;
+`
+
+export const ButtonHistoric = styled.div`
+  button {
+    font-size: 16px;
+    font-weight: 400;
+    width: 188px;
+  }
+`
 
 export const HeaderLimit = styled.div`
   max-width: 1130px;
@@ -40,7 +48,7 @@ export const HeaderLimit = styled.div`
   @media (max-width: 768px) {
     display: none;
   }
-`;
+`
 
 export const Logo = styled.div`
   min-width: 203px;
@@ -55,14 +63,14 @@ export const Logo = styled.div`
     height: 100%;
     background: url(${({ admin }) => (admin ? logoImgAdminMobile : logoImg)})
       no-repeat center;
-    background-size: ${({ admin }) => (admin ? "180px" : "150px")};
+    background-size: ${({ admin }) => (admin ? '180px' : '150px')};
   }
-`;
+`
 
 export const Search = styled.div`
   width: 100%;
   height: 100%;
-`;
+`
 
 export const Logout = styled.button`
   background: none;
@@ -73,7 +81,7 @@ export const Logout = styled.button`
     color: ${({ theme }) => theme.COLORS.WHITE};
     font-size: 24px;
   }
-`;
+`
 
 export const HeaderMobile = styled.div`
   width: 100%;
@@ -83,14 +91,14 @@ export const HeaderMobile = styled.div`
   grid-template-columns: 1fr 3fr 1fr;
   grid-template-rows: auto 0 0;
   grid-template-areas:
-    "menu"
-    "logo"
-    "order";
+    'menu'
+    'logo'
+    'order';
 
   @media (min-width: 768px) {
     display: none;
   }
-`;
+`
 
 export const Circle = styled.div`
   display: grid;
@@ -106,14 +114,14 @@ export const Circle = styled.div`
   color: ${({ theme }) => theme.COLORS.WHITE};
   top: 15px;
   margin-right: -5px;
-`;
+`
 
 export const ContainerAlt = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
   transition: all 1s ease-in-out;
-`;
+`
 
 export const Order = styled.div`
   display: flex;
@@ -121,4 +129,4 @@ export const Order = styled.div`
   justify-content: flex-end;
 
   position: relative;
-`;
+`

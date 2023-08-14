@@ -8,46 +8,48 @@ import {
   Order,
   Circle,
   ButtonFavorite,
-} from "./styles";
-import { useState } from "react";
-import { GrSearch } from "react-icons/gr";
-import { PiReceiptLight, PiSignOut } from "react-icons/pi";
-import { RxHamburgerMenu } from "react-icons/rx";
-import { useNavigate } from "react-router-dom";
-import { Search } from "../Search";
-import { ButtonOrder } from "../ButtonOrder";
-import { NavOffCanvas } from "../NavOffCanvas";
-import { ButtonText } from "../ButtonText";
-import { useAuth } from "../../hook/auth";
+  ButtonHistoric
+} from './styles'
+import { useState } from 'react'
+import { GrSearch } from 'react-icons/gr'
+import { PiReceiptLight, PiSignOut } from 'react-icons/pi'
+import { RxHamburgerMenu } from 'react-icons/rx'
+import { useNavigate } from 'react-router-dom'
+import { Search } from '../Search'
+import { ButtonOrder } from '../ButtonOrder'
+import { NavOffCanvas } from '../NavOffCanvas'
+import { ButtonText } from '../ButtonText'
+import { useAuth } from '../../hook/auth'
+import { useCart } from '../../hook/CartStore'
 
 export function Header({ search }) {
-  const [showMenu, setShowMenu] = useState(false);
-  const navigate = useNavigate();
-  const { user, signOut } = useAuth();
-  const admin = user?.isAdmin;
-
+  const [showMenu, setShowMenu] = useState(false)
+  const navigate = useNavigate()
+  const { user, signOut } = useAuth()
+  const { cart } = useCart()
+  const admin = user?.isAdmin
   function handleShowNavOffCanvas() {
-    setShowMenu(true);
+    setShowMenu(true)
   }
 
   function handleSignOut() {
-    navigate("/");
-    signOut();
+    navigate('/')
+    signOut()
   }
 
   function handleNavigateToOrders() {
-    navigate("/orders");
+    navigate('/orders')
   }
   return (
     <Container>
       <HeaderLimit>
-        <Logo admin={admin} onClick={() => navigate("/")} />
+        <Logo admin={admin} onClick={() => navigate('/')} />
 
         <Search
           placeholder="Busque por pratos ou ingredientes"
           icon={GrSearch}
-          onChange={(e) => {
-            search(e.target.value);
+          onChange={e => {
+            search(e.target.value)
           }}
         />
 
@@ -55,18 +57,24 @@ export function Header({ search }) {
           {!admin && (
             <ButtonText
               title="Meus favoritos"
-              onClick={() => navigate("/favorites")}
+              onClick={() => navigate('/favorites')}
             />
           )}
         </ButtonFavorite>
+        <ButtonHistoric>
+          <ButtonText
+            title="Histórico de pedidos"
+            onClick={() => navigate('/historic')}
+          />
+        </ButtonHistoric>
         {admin && admin ? (
           <ButtonOrder
             name="Novo prato"
-            onClick={() => navigate("/product/new")}
+            onClick={() => navigate('/product/new')}
           />
         ) : (
           <ButtonOrder
-            name={`Pedidos (0)`}
+            name={`Pedidos (${cart?.length})`}
             icon={PiReceiptLight}
             onClick={handleNavigateToOrders}
           />
@@ -81,7 +89,7 @@ export function Header({ search }) {
           <RxHamburgerMenu size={30} />
         </ContainerAlt>
 
-        <Logo admin={admin} onClick={() => navigate("/")} />
+        <Logo admin={admin} onClick={() => navigate('/')} />
 
         {!admin && (
           <Order onClick={handleNavigateToOrders}>
@@ -92,5 +100,5 @@ export function Header({ search }) {
       </HeaderMobile>
       {showMenu && <NavOffCanvas active={setShowMenu} admin={admin} />}
     </Container>
-  );
+  )
 }

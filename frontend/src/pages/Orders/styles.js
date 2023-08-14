@@ -23,7 +23,7 @@ export const Container = styled.div`
 export const LimitPageMobile = styled.div`
   max-width: 1122px;
   margin: 34px auto;
-  height: 73vh;
+  height: 80vh;
 
   display: grid;
   grid-template-columns: 1fr 1fr;
