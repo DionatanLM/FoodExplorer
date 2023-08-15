@@ -66,7 +66,19 @@ $ npm run dev
   e-mail: admin@foodexplorer.com
   senha: 123456
 ```
+## 🤝 Colaboradores
 
-- FrontEnd: ReactJS, Javascript, Vite, Styled Components, React Router Dom e Axios
-- BackEnd: NodeJS, Multer, BCryptjs e Express
-- Banco de Dados: SQlite e Knex.js como Query Builder
+Agradecemos às seguintes pessoas que contribuíram para este projeto:
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/DionatanLM" target="_blank">
+        <img src="https://avatars3.githubusercontent.com/u/62453867" width="100px;" alt="Foto do DionatanLM no GitHub"/><br>
+        <sub>
+          <b>Dionatan de Lima</b>
+        </sub>
+      </a>
+    </td>
+  </tr>
+</table>
