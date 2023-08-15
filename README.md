@@ -3,7 +3,7 @@
 </h1>
 <p align="center">
   <a href="https://main--food-explorer-dlm.netlify.app/">
-    <img alt="FoodExplorerHome" title="FoodExplorerHome" src="frontend/src/assets/imgHomePage.png" width="100%">
+    <img alt="FoodExplorerHome" title="FoodExplorerHome" src="frontend/src/assets/imgPage.png" width="100%">
   </a>
 </p>
 > O Food Explorer é uma aplicação interativa e completa que simula a experiência de um restaurante fictício. Ele foi projetado para proporcionar uma jornada gastronômica única, permitindo que os usuários explorem pratos deliciosos, conheçam seus detalhes, ingredientes e sabores, e até mesmo efetuem pagamentos de maneira conveniente.
