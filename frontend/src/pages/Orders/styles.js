@@ -155,7 +155,7 @@ export const PaymentTitle = styled.div`
   margin-bottom: 32px;
 `;
 
-export const PaymentCard = styled.form`
+export const PaymentCard = styled.div`
   height: 445px;
   padding: 48px 91px;
   border-radius: 0px 0px 8px 8px;

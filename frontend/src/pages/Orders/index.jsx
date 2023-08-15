@@ -55,61 +55,70 @@ export function Orders() {
   const [pageNumber, setPageNumber] = useState(1);
   const { cart, total, handleRemoveDishFromCart, handleResetCart } = useCart();
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmitPix = async (event) => {
     setPaymentProgress(true);
 
-    const errors = {};
+    const formObj = {
+      orderStatus: "1",
+      totalPrice: total,
+      paymentMethod: "pix",
+      cart,
+    };
+
     try {
-      const formObj = {
-        orderStatus: "1",
-        totalPrice: total,
-        paymentMethod: typePayment,
-        cart,
-      };
+      setFormErrors({});
+      await api.post("/orders", formObj);
+      setTimeout(() => {
+        navigate("/historic");
+      }, 3500);
+      handleResetCart();
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
-      if (typePayment === "credito") {
-        if (
-          !cardNumber ||
-          cardNumber.length < 19 ||
-          !validateCreditCardNumber(cardNumber)
-        ) {
-          errors.cardNumber = "Número do cartão inválido";
-        }
+  const handleSubmitCredit = async (event) => {
+    const errors = {};
 
-        if (!expiryDate || expiryDate.length < 5) {
-          errors.expiryDate = "Validade do cartão inválido";
-        }
+    try {
+      if (
+        !cardNumber ||
+        cardNumber.length < 19 ||
+        !validateCreditCardNumber(cardNumber)
+      ) {
+        errors.cardNumber = "Número do cartão inválido";
+      }
 
-        if (!cvv || cvv.length < 3) {
-          errors.cvv = "CVV do cartão inválido";
-        }
+      if (!expiryDate || expiryDate.length < 5) {
+        errors.expiryDate = "Validade do cartão inválido";
+      }
 
-        if (Object.keys(errors).length === 0) {
-          setFormErrors({});
+      if (!cvv || cvv.length < 3) {
+        errors.cvv = "CVV do cartão inválido";
+      }
 
-          await api.post("/orders", formObj);
-          setTimeout(() => {
-            navigate("/historic");
-          }, 3500);
-          handleResetCart();
-        }
-      } else {
+      if (Object.keys(errors).length === 0) {
+        setFormErrors({});
+        const formObj = {
+          orderStatus: "1",
+          totalPrice: total,
+          paymentMethod: "credito",
+          cart,
+        };
         await api.post("/orders", formObj);
         setTimeout(() => {
           navigate("/historic");
-          handleResetCart();
         }, 3500);
+        handleResetCart();
+      } else {
+        setFormErrors(errors);
       }
     } catch (e) {
       console.log(e);
-      setFormErrors(errors);
     }
   };
 
   const handleInputChange = (event, inputName) => {
-    event.preventDefault();
-
     const inputValue = event.target.value;
     setFormErrors((prevErrors) => ({
       ...prevErrors,
@@ -193,7 +202,7 @@ export function Orders() {
           <PaymentCard>
             {typePayment === "pix" ? (
               !paymentProgress ? (
-                <a onClick={total && handleSubmit}>
+                <a onClick={() => total && handleSubmitPix()}>
                   <QrCode />
                 </a>
               ) : (
@@ -239,7 +248,9 @@ export function Orders() {
                   name={`Finalizar pagamento`}
                   icon={PiReceiptLight}
                   type="submit"
-                  onClick={handleSubmit}
+                  onClick={() =>
+                    typePayment === "credito" && handleSubmitCredit()
+                  }
                 />
               </>
             )}
