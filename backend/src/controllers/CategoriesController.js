@@ -74,7 +74,7 @@ class CategoriesController {
 
       return response.status(200).json(filteredCategories);
     } catch (error) {
-      console.error(error); // Adicione esta linha para imprimir o erro no console
+      console.error(error);
       return response.status(500).json({ error: "Internal server error" });
     }
   }

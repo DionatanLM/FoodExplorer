@@ -45,6 +45,12 @@ export function Favorites() {
                 </ContainerInfo>
               </FavoriteItem>
             ))}
+            {favorites?.length < 1 && (
+              <p className="orderNone">
+                Você ainda não favoritou nenhum item. Favorite um item
+                para ver aqui.
+              </p>
+            )}
           </FavoriteList>
         </MyFavorites>
       </LimitPageMobile>

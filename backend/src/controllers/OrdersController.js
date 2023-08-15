@@ -18,7 +18,7 @@ class OrdersController {
       return {
         title: cart.title,
         quantity: cart.quantity,
-        dish_id: cart.id,
+        dish_id: cart.dish_id,
         order_id,
       };
     });
@@ -26,6 +26,41 @@ class OrdersController {
     await knex("orders_items").insert(itemsInsert);
 
     return response.status(201).json(order_id);
+  }
+
+  async getAll(request, response) {
+    try {
+      const orders = await knex("orders_items")
+        .select([
+          "orders.id",
+          "orders.user_id",
+          "orders.orderStatus",
+          "orders.totalPrice",
+          "orders.paymentMethod",
+          "orders.created_at",
+        ])
+
+        .innerJoin("orders", "orders.id", "orders_items.order_id")
+        .groupBy("orders.id");
+
+      const orders_items = await knex("orders_items");
+
+      const ordersWithItems = orders.map((order) => {
+        const orderItem = orders_items.filter(
+          (item) => item.order_id === order.id
+        );
+
+        return {
+          ...order,
+          items: orderItem,
+        };
+      });
+
+      return response.status(200).json(ordersWithItems);
+    } catch (error) {
+      console.error(error);
+      return response.status(500).json({ error: "Internal server error" });
+    }
   }
 
   async get(request, response) {

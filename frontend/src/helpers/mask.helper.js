@@ -14,3 +14,15 @@ export const maskExpirationDate = (value) => {
 export const maskCVV = (value) => {
   return value?.replace(/\D/g, "");
 };
+
+export const maskCurrency = (value) => {
+  value = value?.replace(/\D/g, "");
+
+  const parsedNumber = parseFloat(value) / 100;
+
+  if (isNaN(parsedNumber)) return "0";
+
+  return Intl.NumberFormat("pt-BR", { minimumFractionDigits: 2 }).format(
+    parsedNumber
+  );
+};

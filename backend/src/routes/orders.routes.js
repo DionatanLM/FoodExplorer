@@ -8,6 +8,7 @@ const ordersRouter = Router();
 
 ordersRouter.use(ensureAuthenticated);
 
+ordersRouter.get("/all", ensureIsAdmin, ordersController.getAll);
 ordersRouter.post("/", ordersController.create);
 ordersRouter.get("/", ordersController.get);
 ordersRouter.put("/", ensureIsAdmin, ordersController.update);

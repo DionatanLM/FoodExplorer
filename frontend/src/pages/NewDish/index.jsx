@@ -22,7 +22,11 @@ import { FiUpload } from "react-icons/fi";
 import { IngredientItem } from "../../components/IngredientItem";
 import { ButtonText } from "../../components/ButtonText";
 import { api } from "../../service/api";
-import { formatPrice, unformatPrice } from "../../helpers/currency.helper";
+import {
+  formatPrice,
+  moneyToPtBr,
+  unformatPrice,
+} from "../../helpers/currency.helper";
 
 export function NewDish() {
   const [loading, setLoading] = useState(false);
@@ -101,8 +105,6 @@ export function NewDish() {
       formData.append("ingredients[]", ingredient)
     );
 
-    console.log(formData, "formData");
-
     await api
       .post("/dishes", formData)
       .then(alert("Prato adicionado com sucesso!"), navigate("/"))
@@ -116,14 +118,6 @@ export function NewDish() {
 
     setLoading(false);
   };
-
-  function handleChangeImage(e) {
-    const file = e.target.files[0];
-    setImgDishFile(file);
-
-    const imagePreview = URL.createObjectURL(file);
-    setImgDish(imagePreview);
-  }
 
   useEffect(() => {
     async function getCategories() {
@@ -209,9 +203,9 @@ export function NewDish() {
             <Input
               placeholder="R$ 0,00"
               label="Preço"
-              value={price}
+              value={moneyToPtBr(price)}
               onChange={(e) => {
-                setPrice(formatPrice(e.target.value));
+                setPrice(e.target.value);
               }}
               widthContainer={{ width: "300px" }}
             />

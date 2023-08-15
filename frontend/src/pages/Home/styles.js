@@ -8,7 +8,7 @@ export const Container = styled.div`
 `;
 
 export const LimitPageMobile = styled.div`
-  min-height: 563px;
+  min-height: 74.2vh;
   @media (max-width: 768px) {
     padding: 0 24px;
   }
@@ -31,5 +31,28 @@ export const CategoryTitle = styled.div`
 
   @media (max-width: 768px) {
     font-size: 18px;
+  }
+`;
+
+export const ButtonRedirectCart = styled.button`
+  display: none;
+  @media (max-width: 768px) {
+    position: fixed;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 60px;
+
+    bottom: ${({ cart }) => (cart > 0 ? "0px" : "-60px")};
+    background-color: #750310;
+    border: none;
+    color: white;
+    transition: all 0.3s ease 0s;
+
+    &:hover {
+      filter: brightness(0.98) !important;
+    }
   }
 `;

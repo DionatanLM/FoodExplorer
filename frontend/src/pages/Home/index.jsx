@@ -1,4 +1,3 @@
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { Banner } from "../../components/Banner";
 import { Card } from "../../components/Card";
 import { Footer } from "../../components/Footer";
@@ -9,16 +8,22 @@ import {
   LimitPageMobile,
   CategorySection,
   CategoryTitle,
+  ButtonRedirectCart,
 } from "./styles";
 import { moneyToPtBrTwoPrecision } from "../../helpers/currency.helper";
 import { useAuth } from "../../hook/auth";
 import { useEffect, useState } from "react";
 import { api } from "../../service/api";
+import { useNavigate } from "react-router-dom";
+import { PiReceiptLight } from "react-icons/pi";
+import { useCart } from "../../hook/CartStore";
 
 export function Home() {
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
   const { user } = useAuth();
+  const { cart } = useCart();
+  const navigate = useNavigate();
   const admin = user?.isAdmin;
 
   useEffect(() => {
@@ -34,7 +39,7 @@ export function Home() {
       <Header search={setSearch} />
       <LimitPageMobile>
         <Banner />
-       
+
         {data?.map((category, index) => (
           <CategorySection key={index}>
             <CategoryTitle>{category.name}</CategoryTitle>
@@ -55,6 +60,15 @@ export function Home() {
           </CategorySection>
         ))}
       </LimitPageMobile>
+
+      <ButtonRedirectCart
+        onClick={() => navigate("/orders")}
+        cart={cart?.length}
+      >
+        <PiReceiptLight size={30} />
+        Ir para o carrinho
+      </ButtonRedirectCart>
+
       <Footer />
     </Container>
   );

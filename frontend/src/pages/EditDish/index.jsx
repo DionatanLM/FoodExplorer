@@ -22,98 +22,110 @@ import { FiUpload } from "react-icons/fi";
 import { IngredientItem } from "../../components/IngredientItem";
 import { ButtonText } from "../../components/ButtonText";
 import { api } from "../../service/api";
-import {
-  formatPrice,
-  moneyToPtBrTwoPrecision,
-} from "../../helpers/currency.helper";
+import { moneyToPtBr, unformatPrice } from "../../helpers/currency.helper";
+import { maskCurrency } from "../../helpers/mask.helper";
 
 export function EditDish() {
-  const [tags, setTags] = useState([]);
-  const [newTag, setNewTag] = useState("");
-  const [title, setTitle] = useState("");
-  const [price, setPrice] = useState("");
-  const [description, setDescription] = useState("");
+  const params = useParams();
+  const navigate = useNavigate();
 
+  const [title, setTitle] = useState();
+  const [price, setPrice] = useState();
+  const [description, setDescription] = useState();
+  const [ingredients, setIngredients] = useState([]);
+  const [categorySelected, setCategorySelected] = useState();
   const [imgDishFile, setImgDishFile] = useState();
 
-  const [dataEdit, setDataEdit] = useState({
-    name: "",
-    category_id: "",
-    ingredients: [],
-    price: "",
-    description: "",
-  });
-  const imageURL =
-    dataEdit && `${api.defaults.baseURL}/files/${dataEdit.image}`;
-
-  const [imgDish, setImgDish] = useState(imageURL);
-
-  const navigate = useNavigate();
-  const params = useParams();
-  const isEditing = !!params.id;
-
-  const handleRemoveTag = (deletedTag) => {
-    if (isEditing) {
-      const updatedIngredients = dataEdit.ingredients.filter(
-        (tag) => tag.id !== deletedTag.id
-      );
-      setDataEdit((prevData) => ({
-        ...prevData,
-        ingredients: updatedIngredients,
-      }));
-    } else {
-      setTags((prevState) => prevState.filter((tag) => tag !== deletedTag));
-    }
-  };
-
-  const handleAddTag = () => {
-    if (isEditing) {
-      const updatedIngredients = [...dataEdit.ingredients, { name: newTag }];
-      setDataEdit((prevData) => ({
-        ...prevData,
-        ingredients: updatedIngredients,
-      }));
-    } else {
-      setTags((prevState) => [...prevState, newTag]);
-    }
-    setNewTag("");
-  };
-
-  const handleCreateDish = () => {
-    //console.log();
-  };
-
-  const handleEditDish = (e) => {
-    e.preventDefault();
-    console.log("edit");
-  };
-
-  const handleDeleteDish = () => {
-    //console.log();
-  };
-
-  function handleChangeImage(e) {
-    const file = e.target.files[0];
-    setImgDishFile(file);
-
-    const imagePreview = URL.createObjectURL(file);
-    setImgDish(imagePreview);
-  }
+  const [categoriesData, setCategoriesData] = useState();
+  const [dataEdit, setDataEdit] = useState();
+  const [newIngredient, setNewIngredient] = useState("");
 
   useEffect(() => {
     async function getDish() {
-      if (isEditing) {
-        const response = await api.get(`/dishes/${params.id}`);
-        setDataEdit(response.data);
-      }
+      const response = await api.get(`/dishes/${params.id}`);
+      setDataEdit(response.data);
+      setTitle(response.data.title);
+      setPrice(response.data.price);
+      setIngredients(
+        response.data.ingredients.map((ingredient) => ingredient.name)
+      );
+      setDescription(response.data.description);
+      setImgDishFile(response.data.image);
+      setCategorySelected(response.data.category_id);
     }
 
     getDish();
-  }, [isEditing, params.id]);
+  }, [params.id]);
 
-  console.log(imgDish, "imgDish");
-  console.log(imgDishFile, "imgDishFile");
-  console.log(dataEdit);
+  const handleRemoveIngredient = (deletedTag) => {
+    const updatedIngredients = ingredients.filter(
+      (ingredient) => ingredient !== deletedTag
+    );
+    setIngredients(updatedIngredients);
+  };
+
+  const handleAddIngredient = () => {
+    if (newIngredient.trim() !== "") {
+      setIngredients((prevIngredients) => [...prevIngredients, newIngredient]);
+      setNewIngredient("");
+    }
+  };
+
+
+  const handleCreateDish = async (e) => {
+    e.preventDefault();
+    try {
+      const formData = new FormData();
+      formData.append("image", imgDishFile);
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("category_id", Number(categorySelected));
+      formData.append("price", unformatPrice(price));
+      const ingredientsArray = Array.isArray(ingredients)
+        ? ingredients
+        : [ingredients];
+      ingredientsArray.forEach((ingredient) =>
+        formData.append("ingredients[]", ingredient)
+      );
+
+      api
+        .put(`/dishes/${params.id}`, formData)
+        .then(alert("Prato editado com sucesso!"), navigate("/"))
+        .catch((error) => {
+          if (error.response) {
+            alert(error.response.data.message);
+          } else {
+            alert("Erro ao criar o prato!");
+          }
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleDeleteDish = async () => {
+    const confirmDelete = window.confirm(
+      "Tem certeza que deseja excluir este prato?"
+    );
+
+    if (confirmDelete) {
+      try {
+        await api.delete(`/dishes`, { data: { id: dataEdit.id } });
+        navigate(-1);
+      } catch (error) {
+        console.error("Erro ao excluir o prato:", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    async function getCategories() {
+      const response = await api.get("/categories");
+      setCategoriesData(response.data);
+    }
+    getCategories();
+  }, []);
+
   return (
     <Container>
       <Header />
@@ -125,59 +137,67 @@ export function EditDish() {
             icon={PiCaretLeft}
           />
         </Back>
-        <Title>{params.id ? "Editar prato" : "Adicionar prato"}</Title>
+        <Title>{"Editar prato"}</Title>
         <Form>
           <ContainerInput>
             <InputImage>
               <label className="titleImg">Imagem do prato</label>
               <label htmlFor="imgDish" className="imgDish">
-                <input id="imgDish" type="file" onChange={handleChangeImage} />
-                <FiUpload size={30} />
+                <input
+                  id="imgDish"
+                  type="file"
+                  onChange={(e) => setImgDishFile(e.target.files[0])}
+                />
+                <FiUpload size={30} className="iconImg" />
 
-                {imgDishFile ? imgDishFile.name : <span>Selecione imagem</span>}
+                {dataEdit?.image || imgDishFile?.name
+                  ? "Imagem selecionada."
+                  : "Selecione a imagem"}
               </label>
             </InputImage>
             <Input
               placeholder="Ex: Salada Ceasar"
               type="text"
               label="Nome"
-              value={isEditing ? dataEdit.title : title}
+              value={title}
               onChange={(e) => {
-                if (isEditing) {
-                  setDataEdit((prevData) => ({
-                    ...prevData,
-                    title: e.target.value,
-                  }));
-                } else {
-                  setTitle(e.target.value);
-                }
+                setTitle(e.target.value);
               }}
             />
-            <Select type="text" label="Categoria">
-              <option value="1">Massas</option>
-              <option value="2">Carnes</option>
-              <option value="3">Saladas</option>
-              <option value="4">Sobremesas</option>
-              <option value="5">Bebidas</option>
+            <Select
+              type="text"
+              label="Categoria"
+              onChange={(e) => setCategorySelected(e.target.value)}
+              defaultValue="default"
+              value={categorySelected}
+            >
+              <option value="default" disabled>
+                Selecione a categoria
+              </option>
+              {categoriesData?.map((category, index) => (
+                <option key={index} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
             </Select>
           </ContainerInput>
           <ContainerInput>
             <Section title="Marcadores">
               <label>Ingredientes</label>
               <Tags className="tags">
-                {(isEditing ? dataEdit.ingredients : tags).map((tag, index) => (
+                {ingredients.map((ingredient, index) => (
                   <IngredientItem
                     key={String(index)}
-                    value={isEditing ? tag.name : tag}
-                    onClick={() => handleRemoveTag(tag)}
+                    value={ingredient.name ? ingredient.name : ingredient}
+                    onClick={() => handleRemoveIngredient(ingredient)}
                   />
                 ))}
                 <IngredientItem
                   isNew
                   placeholder="Adicionar"
-                  onChange={(e) => setNewTag(e.target.value)}
-                  value={newTag}
-                  onClick={handleAddTag}
+                  onChange={(e) => setNewIngredient(e.target.value)}
+                  value={newIngredient}
+                  onClick={handleAddIngredient}
                 />
               </Tags>
             </Section>
@@ -185,18 +205,9 @@ export function EditDish() {
             <Input
               placeholder="R$ 00,00"
               label="Preço"
-              value={
-                isEditing ? formatPrice(dataEdit.price) : formatPrice(price)
-              }
+              value={price}
               onChange={(e) => {
-                if (isEditing) {
-                  setDataEdit((prevData) => ({
-                    ...prevData,
-                    price: e.target.value,
-                  }));
-                } else {
-                  setPrice(e.target.value);
-                }
+                setPrice(e.target.value);
               }}
               widthContainer={{ width: "300px" }}
             />
@@ -205,32 +216,23 @@ export function EditDish() {
             label="Descrição"
             placeholder="Fale brevemente sobre o prato, seus ingredientes e composição"
             type="textarea"
-            value={isEditing ? dataEdit.description : description}
+            value={description}
             onChange={(e) => {
-              if (isEditing) {
-                setDataEdit((prevData) => ({
-                  ...prevData,
-                  description: e.target.value,
-                }));
-              } else {
-                setDescription(e.target.value);
-              }
+              setDescription(e.target.value);
             }}
             textarea
           />
           <ContainerButton>
-            {!isEditing && (
-              <Button
-                name="Excluir prato"
-                className="buttonDelete"
-                onClick={handleDeleteDish}
-              />
-            )}
+            <Button
+              name="Excluir prato"
+              className="buttonDelete"
+              onClick={handleDeleteDish}
+            />
             <Button
               name="Salvar alterações"
               className="button"
               type="submit"
-              onClick={!isEditing ? handleCreateDish : handleEditDish}
+              onClick={handleCreateDish}
             />
           </ContainerButton>
         </Form>

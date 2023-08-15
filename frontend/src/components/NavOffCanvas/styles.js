@@ -1,28 +1,33 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  display: none;
+  @media (max-width: 768px) {
+    width: 100vw;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  background-color: ${({ theme }) => theme.COLORS.DARK_400};
-  left: ${(props) => (props.sidebar ? "0" : "-100%")};
-  animation: showSidebar 0.1s;
-  z-index: 10;
+    position: absolute;
+    top: 70px;
 
-  @keyframes showSidebar {
-    from {
-      opacity: 0;
-      width: 0;
-    }
-    to {
-      opacity: 1;
-      width: 300px;
+    background-color: ${({ theme }) => theme.COLORS.DARK_400};
+    left: ${(props) => (props.showMenu ? "0" : "-100%")};
+    animation: showSidebar 0.1s;
+    transition: all 0.3s ease 0s;
+
+    z-index: 1;
+
+    @keyframes showSidebar {
+      from {
+        opacity: 0;
+        width: 0;
+      }
+      to {
+        opacity: 1;
+        width: 300px;
+      }
     }
   }
 `;

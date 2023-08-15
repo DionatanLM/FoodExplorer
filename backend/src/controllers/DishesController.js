@@ -47,10 +47,8 @@ class DishesController {
   }
 
   async index(request, response) {
-    // Capturing Query Parameters
     const { title, ingredients } = request.query;
 
-    // Listing Dishes and Ingredients at the same time (innerJoin)
     let dishes;
 
     const query = knex("dishes")
@@ -115,7 +113,61 @@ class DishesController {
     });
   }
 
-  async update(request, response) {}
+  async deleteDish(request, response) {
+    const { id } = request.body;
+
+    try {
+      await knex("dishes").where({ id }).del();
+
+      return response.status(201).json();
+    } catch (error) {
+      console.error("Erro ao excluir o prato:", error);
+      return response.status(500).json({ error: "Ocorreu um erro" });
+    }
+  }
+
+  async update(request, response) {
+    const { id } = request.params; 
+    const { title, description, category_id, price, ingredients } =
+      request.body;
+
+    try {
+      const checkDishExists = await knex("dishes").where({ id }).first();
+
+      if (!checkDishExists) {
+        return response.status(404).json({ error: "Prato não encontrado." });
+      }
+
+      await knex("dishes").where({ id }).update({
+        title,
+        description,
+        price,
+        category_id,
+      });
+
+      if (ingredients) {
+        await knex("ingredients").where({ dish_id: id }).del();
+
+        const ingredientsInsert = ingredients?.map((name) => {
+          return {
+            name,
+            dish_id: id,
+          };
+        });
+
+        await knex("ingredients").insert(ingredientsInsert);
+      }
+
+      return response
+        .status(200)
+        .json({ message: "Prato atualizado com sucesso." });
+    } catch (error) {
+      console.error(error);
+      return response
+        .status(500)
+        .json({ error: "Ocorreu um erro ao atualizar o prato." });
+    }
+  }
 }
 
 module.exports = DishesController;

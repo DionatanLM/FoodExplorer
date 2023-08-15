@@ -32,3 +32,22 @@ export const formatPrice = (value) => {
 export const unformatPrice = (formattedValue) => {
   return parseFloat(formattedValue.replace(/[^\d,.]/g, "").replace(",", "."));
 };
+
+export const formatDate = (inputDate) => {
+  const date = new Date(inputDate);
+
+  date.setHours(date.getHours() - 3);
+
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+
+  const formattedDate = `${day < 10 ? "0" : ""}${day}/${
+    month < 10 ? "0" : ""
+  }${month} às ${hours < 10 ? "0" : ""}${hours}h${
+    minutes < 10 ? "0" : ""
+  }${minutes}`;
+
+  return formattedDate;
+};

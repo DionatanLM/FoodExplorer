@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const Container = styled.div`
   width: 100%;
@@ -15,9 +15,9 @@ export const Container = styled.div`
     width: 100%;
 
     padding: 14px 14px 14px 55px;
-    color: ${({ theme }) => theme.COLORS.LIGHT_500};
+    color: ${({ theme }) => theme.COLORS.LIGHT_500} !important;
     background: ${({ theme }) => theme.COLORS.DARK_900};
-    border-radius: 8px;
+    border-radius: 8px !important;
     border: none;
 
     @media (max-width: 950px) {
@@ -36,4 +36,4 @@ export const Container = styled.div`
       stroke: #ffffff;
     }
   }
-`
+`;

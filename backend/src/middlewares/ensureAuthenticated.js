@@ -9,7 +9,7 @@ const ensureAuthenticated = (req, res, next) => {
     throw new AppError("JWT token inválido", 401);
   }
 
-  const [, token] = authHeader.split(" "); // Bearer xxxxxxxx
+  const [, token] = authHeader.split(" ");
 
   try {
     const { sub: user_id } = verify(token, authConfig.jwt.secret);

@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { Footer } from '../../components/Footer'
-import { Header } from '../../components/Header'
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Footer } from "../../components/Footer";
+import { Header } from "../../components/Header";
 import {
   Container,
   LimitPageMobile,
@@ -14,50 +14,53 @@ import {
   Ingredients,
   IngredientsText,
   AmountContainer,
-  Amount
-} from './styles'
-import { PiCaretLeft } from 'react-icons/pi'
-import { ButtonText } from '../../components/ButtonText'
-import { MdAdd, MdRemove } from 'react-icons/md'
-import { Button } from '../../components/Button'
-import { useAuth } from '../../hook/auth'
-import { api } from '../../service/api'
-import { useCart } from '../../hook/CartStore'
+  Amount,
+} from "./styles";
+import { PiCaretLeft } from "react-icons/pi";
+import { ButtonText } from "../../components/ButtonText";
+import { MdAdd, MdRemove } from "react-icons/md";
+import { Button } from "../../components/Button";
+import { useAuth } from "../../hook/auth";
+import { api } from "../../service/api";
+import { useCart } from "../../hook/CartStore";
+import { moneyToPtBrTwoPrecision } from "../../helpers/currency.helper";
 
 export function Product() {
-  const [data, setData] = useState([])
-  const { user } = useAuth()
-  const params = useParams()
-  const { handleAddDishToCart } = useCart()
+  const [data, setData] = useState([]);
+  const { user } = useAuth();
+  const params = useParams();
+  const { handleAddDishToCart } = useCart();
 
   const imageURL = data
     ? `${api.defaults.baseURL}/files/${data?.image}`
-    : imagePlaceholder
+    : imagePlaceholder;
 
-  const admin = user?.isAdmin
+  const admin = user?.isAdmin;
 
-  const [amount, setAmount] = useState(1)
-  const navigate = useNavigate()
+  const [amount, setAmount] = useState(1);
+  const navigate = useNavigate();
 
   function handleAmountAdd() {
-    setAmount(amount + 1)
+    setAmount(amount + 1);
   }
   function handleAmountRemove() {
-    setAmount(amount - 1)
+    if (amount > 1) {
+      setAmount(amount - 1);
+    }
   }
 
   function handleBack() {
-    navigate(-1)
+    navigate(-1);
   }
 
   useEffect(() => {
     async function getDish() {
-      const response = await api.get(`/dishes/${params.id}`)
-      setData(response.data)
+      const response = await api.get(`/dishes/${params.id}`);
+      setData(response.data);
     }
 
-    getDish()
-  }, [])
+    getDish();
+  }, []);
 
   return (
     <Container>
@@ -69,7 +72,7 @@ export function Product() {
 
         <ProductContainer>
           <ProductImage>
-            <img src={imageURL} alt={'Prato'} />
+            <img src={imageURL} alt={"Prato"} />
           </ProductImage>
           <ProductInfo>
             <ProductTitle>{data?.title}</ProductTitle>
@@ -83,7 +86,10 @@ export function Product() {
             </Ingredients>
             <AmountContainer admin={admin}>
               {admin ? (
-                <Button name={'Editar prato'} />
+                <Button
+                  name={"Editar prato"}
+                  onClick={() => navigate(`/product/edit/${data?.id}`)}
+                />
               ) : (
                 <>
                   <Amount>
@@ -92,7 +98,9 @@ export function Product() {
                     <MdAdd size={20} onClick={handleAmountAdd} />
                   </Amount>
                   <Button
-                    name={`incluir ∙ ${data?.price}`}
+                    name={`incluir ∙ ${moneyToPtBrTwoPrecision(
+                      data?.price * amount
+                    )}`}
                     onClick={() => handleAddDishToCart(data, amount, imageURL)}
                   />
                 </>
@@ -103,5 +111,5 @@ export function Product() {
       </LimitPageMobile>
       <Footer />
     </Container>
-  )
+  );
 }

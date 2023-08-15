@@ -8,69 +8,70 @@ import {
   Order,
   Circle,
   ButtonFavorite,
-  ButtonHistoric
-} from './styles'
-import { useState } from 'react'
-import { GrSearch } from 'react-icons/gr'
-import { PiReceiptLight, PiSignOut } from 'react-icons/pi'
-import { RxHamburgerMenu } from 'react-icons/rx'
-import { useNavigate } from 'react-router-dom'
-import { Search } from '../Search'
-import { ButtonOrder } from '../ButtonOrder'
-import { NavOffCanvas } from '../NavOffCanvas'
-import { ButtonText } from '../ButtonText'
-import { useAuth } from '../../hook/auth'
-import { useCart } from '../../hook/CartStore'
+  ButtonHistoric,
+} from "./styles";
+import { useState } from "react";
+import { GrSearch } from "react-icons/gr";
+import { PiReceiptLight, PiSignOut } from "react-icons/pi";
+import { useNavigate } from "react-router-dom";
+import { Search } from "../Search";
+import { ButtonOrder } from "../ButtonOrder";
+import { NavOffCanvas } from "../NavOffCanvas";
+import { ButtonText } from "../ButtonText";
+import { useAuth } from "../../hook/auth";
+import { useCart } from "../../hook/CartStore";
 
 export function Header({ search }) {
-  const [showMenu, setShowMenu] = useState(false)
-  const navigate = useNavigate()
-  const { user, signOut } = useAuth()
-  const { cart } = useCart()
-  const admin = user?.isAdmin
+  const [showMenu, setShowMenu] = useState(false);
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+  const { cart } = useCart();
+  const admin = user?.isAdmin;
+
   function handleShowNavOffCanvas() {
-    setShowMenu(true)
+    setShowMenu(showMenu ? false : true);
+    document.getElementById("hamburger").classList.toggle("active");
   }
 
   function handleSignOut() {
-    navigate('/')
-    signOut()
+    navigate("/");
+    signOut();
   }
 
   function handleNavigateToOrders() {
-    navigate('/orders')
+    navigate("/orders");
   }
   return (
     <Container>
       <HeaderLimit>
-        <Logo admin={admin} onClick={() => navigate('/')} />
+        <Logo admin={admin} onClick={() => navigate("/")} />
 
         <Search
           placeholder="Busque por pratos ou ingredientes"
           icon={GrSearch}
-          onChange={e => {
-            search(e.target.value)
+          onChange={(e) => {
+            search(e.target.value);
           }}
         />
 
-        <ButtonFavorite>
-          {!admin && (
+        {!admin && (
+          <ButtonFavorite>
             <ButtonText
               title="Meus favoritos"
-              onClick={() => navigate('/favorites')}
+              onClick={() => navigate("/favorites")}
             />
-          )}
-        </ButtonFavorite>
-        <ButtonHistoric>
+          </ButtonFavorite>
+        )}
+        <ButtonHistoric admin={admin}>
           <ButtonText
-            title="Histórico de pedidos"
-            onClick={() => navigate('/historic')}
+            title={!admin ? "Histórico de pedidos" : "Pedidos"}
+            onClick={() => navigate("/historic")}
           />
         </ButtonHistoric>
         {admin && admin ? (
           <ButtonOrder
             name="Novo prato"
-            onClick={() => navigate('/product/new')}
+            onClick={() => navigate("/product/new")}
           />
         ) : (
           <ButtonOrder
@@ -86,19 +87,27 @@ export function Header({ search }) {
       </HeaderLimit>
       <HeaderMobile>
         <ContainerAlt onClick={handleShowNavOffCanvas}>
-          <RxHamburgerMenu size={30} />
+          <div className="hamburger" id="hamburger">
+            <span className="bar"></span>
+            <span className="bar"></span>
+            <span className="bar"></span>
+          </div>
         </ContainerAlt>
 
-        <Logo admin={admin} onClick={() => navigate('/')} />
+        <Logo admin={admin} onClick={() => navigate("/")} />
 
         {!admin && (
           <Order onClick={handleNavigateToOrders}>
             <PiReceiptLight size={34} />
-            <Circle>0</Circle>
+            <Circle>{cart?.length}</Circle>
           </Order>
         )}
       </HeaderMobile>
-      {showMenu && <NavOffCanvas active={setShowMenu} admin={admin} />}
+      <NavOffCanvas
+        setShowMenu={setShowMenu}
+        showMenu={showMenu}
+        search={search}
+      />
     </Container>
-  )
+  );
 }

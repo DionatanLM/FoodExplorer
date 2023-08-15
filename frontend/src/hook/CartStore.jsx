@@ -27,6 +27,7 @@ function CartProvider({ children }) {
 
       setCart((prevCart) => [...prevCart, order]);
       alert("Item adicionado ao carrinho");
+      
     } catch (error) {
       if (error.response) {
         alert(error.response.data.message);

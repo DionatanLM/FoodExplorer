@@ -23,7 +23,8 @@ export const Container = styled.div`
 export const LimitPageMobile = styled.div`
   max-width: 1122px;
   margin: 34px auto;
-  height: 80vh;
+  min-height: 72.8vh;
+  height: auto;
 
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -42,6 +43,7 @@ export const LimitPageMobile = styled.div`
     grid-template-areas: "order";
     padding: 0 24px;
     height: 100%;
+    min-height: 75.3vh;
   }
 `;
 

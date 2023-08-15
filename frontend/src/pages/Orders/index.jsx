@@ -29,6 +29,8 @@ import { QrCode } from "../../icons/QrCode";
 import { Input } from "../../components/Input";
 import { ButtonOrder } from "../../components/ButtonOrder";
 import { Button } from "../../components/Button";
+import ClockIcon from "../../icons/ClockIcon";
+import ShowScreenForDuration from "../../components/PaymentStatus";
 import { moneyToPtBrTwoPrecision } from "../../helpers/currency.helper";
 import { useCart } from "../../hook/CartStore";
 import {
@@ -37,61 +39,78 @@ import {
   maskExpirationDate,
 } from "../../helpers/mask.helper";
 import { validateCreditCardNumber } from "../../helpers/validation.helper";
+import PaymentStatus from "../../components/PaymentStatus";
+import { api } from "../../service/api";
+import { useNavigate } from "react-router-dom";
 
 export function Orders() {
   const [cardNumber, setCardNumber] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
   const [cvv, setCvv] = useState("");
   const [formErrors, setFormErrors] = useState({});
-  const [paymentProgress, setPaymentProgress] = useState({});
+  const [paymentProgress, setPaymentProgress] = useState(false);
+  const navigate = useNavigate();
 
   const [typePayment, setTypePayment] = useState("pix");
   const [pageNumber, setPageNumber] = useState(1);
-  const { cart, total, handleRemoveDishFromCart } = useCart();
+  const { cart, total, handleRemoveDishFromCart, handleResetCart } = useCart();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setPaymentProgress(true);
 
     const errors = {};
-
-    if (
-      !cardNumber ||
-      cardNumber.length < 19 ||
-      !validateCreditCardNumber(cardNumber)
-    ) {
-      console.log(cardNumber.length);
-      errors.cardNumber = "Número do cartão inválido";
-    }
-
-    if (!expiryDate || expiryDate.length < 5) {
-      errors.expiryDate = "Validade do cartão inválido";
-    }
-
-    if (!cvv || cvv.length < 3) {
-      errors.cvv = "CVV do cartão inválido";
-    }
-
-    if (Object.keys(errors).length === 0) {
-      setFormErrors({});
-
+    try {
       const formObj = {
-        cardNumber,
-        expiryDate,
-        cvv,
+        orderStatus: "1",
+        totalPrice: total,
+        paymentMethod: typePayment,
         cart,
-        total,
       };
 
-      console.log(formObj);
-    } else {
-      // Se houver erros, atualizar o estado de formErrors para mostrar mensagens de erro
+      if (typePayment === "credito") {
+        if (
+          !cardNumber ||
+          cardNumber.length < 19 ||
+          !validateCreditCardNumber(cardNumber)
+        ) {
+          errors.cardNumber = "Número do cartão inválido";
+        }
+
+        if (!expiryDate || expiryDate.length < 5) {
+          errors.expiryDate = "Validade do cartão inválido";
+        }
+
+        if (!cvv || cvv.length < 3) {
+          errors.cvv = "CVV do cartão inválido";
+        }
+
+        if (Object.keys(errors).length === 0) {
+          setFormErrors({});
+
+          await api.post("/orders", formObj);
+          setTimeout(() => {
+            navigate("/historic");
+          }, 3500);
+          handleResetCart();
+        }
+      } else {
+        await api.post("/orders", formObj);
+        setTimeout(() => {
+          navigate("/historic");
+          handleResetCart();
+        }, 3500);
+      }
+    } catch (e) {
+      console.log(e);
       setFormErrors(errors);
     }
   };
 
   const handleInputChange = (event, inputName) => {
+    event.preventDefault();
+
     const inputValue = event.target.value;
-    // Limpar o erro relacionado ao campo quando o valor for alterado
     setFormErrors((prevErrors) => ({
       ...prevErrors,
       [inputName]: undefined,
@@ -111,6 +130,7 @@ export function Orders() {
         break;
     }
   };
+
   return (
     <Container>
       <Header />
@@ -119,8 +139,8 @@ export function Orders() {
           <OrderTitle>Meu pedido</OrderTitle>
 
           <OrderList>
-            {cart.map((item) => (
-              <OrderItem>
+            {cart.map((item, index) => (
+              <OrderItem key={index}>
                 <ProductImage>
                   <img src={item.image} alt={item.title} />
                 </ProductImage>
@@ -144,12 +164,14 @@ export function Orders() {
           </OrderList>
 
           <OrderTotal>Total: {moneyToPtBrTwoPrecision(total)}</OrderTotal>
-          <Button
-            name="Avançar"
-            onClick={() => setPageNumber(2)}
-            className="buttonAdvance"
-            pageNumber={pageNumber}
-          />
+          {total > 0 && (
+            <Button
+              name="Avançar"
+              onClick={() => setPageNumber(2)}
+              className="buttonAdvance"
+              pageNumber={pageNumber}
+            />
+          )}
         </MyOrder>
 
         <Payment pageNumber={pageNumber}>
@@ -168,9 +190,15 @@ export function Orders() {
               isActive={typePayment === "credito"}
             />
           </PaymentButton>
-          <PaymentCard onSubmit={handleSubmit}>
+          <PaymentCard>
             {typePayment === "pix" ? (
-              <QrCode />
+              !paymentProgress ? (
+                <a onClick={total && handleSubmit}>
+                  <QrCode />
+                </a>
+              ) : (
+                <PaymentStatus />
+              )
             ) : (
               <>
                 <Input
@@ -211,6 +239,7 @@ export function Orders() {
                   name={`Finalizar pagamento`}
                   icon={PiReceiptLight}
                   type="submit"
+                  onClick={handleSubmit}
                 />
               </>
             )}

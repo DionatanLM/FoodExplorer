@@ -9,7 +9,7 @@ export const Container = styled.div`
   padding: 24px;
   justify-content: space-between;
 
-  height: 462px;
+  min-height: 462px;
   width: 306px;
   min-width: 306px;
 
@@ -18,7 +18,7 @@ export const Container = styled.div`
   background: ${({ theme }) => theme.COLORS.DARK_200};
 
   @media (max-width: 768px) {
-    height: auto;
+    min-height: auto;
 
     min-width: 200px;
 

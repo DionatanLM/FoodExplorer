@@ -7,8 +7,19 @@ export const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  margin: 0 30px;
+  margin: 0 auto;
+
   max-width: 1368px;
+
+  .formContainer {
+    display: flex;
+    justify-content: center;
+
+    width: 50%;
+    @media (max-width: 950px) {
+      width: 100%;
+    }
+  }
 
   @media (max-width: 950px) {
     flex-direction: column;
@@ -62,7 +73,7 @@ export const Form = styled.form`
 `;
 
 export const Logo = styled.div`
-  width: 100%;
+  width: 50%;
   height: 100%;
   background: url(${logoImg}) no-repeat center;
 

@@ -144,6 +144,15 @@ export const InputImage = styled.div`
     cursor: pointer;
     transition: filter 0.3s;
 
+    /* text-overflow: clip;
+    overflow: hidden;
+    padding: 0 5px;
+    white-space: nowrap;
+
+    .iconImg{
+      padding: 0px 50px;
+    } */
+
     input {
       display: none;
     }

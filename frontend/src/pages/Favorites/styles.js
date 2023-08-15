@@ -10,7 +10,8 @@ export const Container = styled.div`
 export const LimitPageMobile = styled.div`
   max-width: 1122px;
   margin: 34px auto;
-  height: 73vh;
+  min-height: 72.8vh;
+  height: auto;
 
   display: flex;
 
@@ -43,6 +44,13 @@ export const FavoriteList = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 28px;
+
+  .orderNone {
+    color: ${({ theme }) => theme.COLORS.LIGHT_600};
+    @media (max-width: 768px) {
+      margin-top: -20px;
+    }
+  }
 
   @media (max-width: 768px) {
     flex-direction: column;
