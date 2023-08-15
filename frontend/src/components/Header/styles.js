@@ -1,5 +1,5 @@
 import logoImg from "../../assets/logo.png";
-import logoImgAdmin from "../../assets/logoAdmin.svg"; // Atualize a importação
+import logoImgAdmin from "../../assets/logoAdmin.svg"; 
 import logoImgAdminMobile from "../../assets/logoAdminMobile.svg";
 import styled from "styled-components";
 
