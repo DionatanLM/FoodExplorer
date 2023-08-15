@@ -6,6 +6,7 @@
     <img alt="FoodExplorerHome" title="FoodExplorerHome" src="frontend/src/assets/imgPage.png" width="100%">
   </a>
 </p>
+
 > O Food Explorer é uma aplicação interativa e completa que simula a experiência de um restaurante fictício. Ele foi projetado para proporcionar uma jornada gastronômica única, permitindo que os usuários explorem pratos deliciosos, conheçam seus detalhes, ingredientes e sabores, e até mesmo efetuem pagamentos de maneira conveniente.
 
 Este projeto foi o desafio final do curso Explorer da RocketSeat.
