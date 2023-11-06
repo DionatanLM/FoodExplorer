@@ -60,6 +60,8 @@ $ npm run dev
 - Deploy: Render e Netlify
   > Link do prejeto no ar: https://main--food-explorer-dlm.netlify.app/
 
+OBS: Por estar utilizando um serviço gratuito, o sistema BackEnd entra em um estado de repouso após 15 minutos sem atividade. Se houver tentativas de acesso ao site e o back-end não responder, pedimos que aguarde, já que ele estará iniciando os serviços novamente. Esse processo pode levar até 1 minuto, dependendo da quantidade de demanda nos servidores do Render.
+
 ## 🔑 Quer ver como a aplicação funciona vista pelo Admin? Use a conta a seguir:
 
 ```
